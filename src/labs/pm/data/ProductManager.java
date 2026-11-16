@@ -83,15 +83,6 @@ public class ProductManager {
                 dateFormat.format(product.getBestBefore()),
                 type));
 
-        if (review != null){
-            txt.append('\n');
-            txt.append(MessageFormat.format(resources.getString("review"),
-                    review.rating().getStars(),
-                    review.comments()));
-        }else {
-            txt.append('\n');
-            txt.append(resources.getString("no.reviews"));
-        }
 
         //        txt.append(product);
 //        txt.append('\n');
@@ -99,6 +90,26 @@ public class ProductManager {
 //            txt.append(review);
 //        else
 //            txt.append("Not reviewed");
+        txt.append('\n');
+        for (Review review : reviews) {
+            if (review == null){
+                break;
+            }//else {
+//                txt.append('\n');
+//                txt.append(resources.getString("no.reviews"));
+//            }
+            txt.append(MessageFormat.format(resources.getString("review"),
+                    review.rating().getStars(),
+                    review.comments()));
+            txt.append('\n');
+            if (reviews[0] == null){
+                txt.append(resources.getString("no.reviews"));
+                txt.append('\n');
+            }
+
+
+        }
+
         txt.append('\n');
         System.out.println(txt);
     }
