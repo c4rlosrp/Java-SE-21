@@ -13,9 +13,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Arrays;
-import java.util.Locale;
-import java.util.ResourceBundle;
+import java.util.*;
 
 /**
  * @author manana
@@ -27,7 +25,10 @@ public class ProductManager {
     private ResourceBundle resources;
     private DateTimeFormatter dateFormat;
     private NumberFormat moneyFomart;
+
     private Review[] reviews = new Review[5];
+    private Map<Product, List<Review>> products = new HashMap<>();
+
 
     public ProductManager (Locale locale){
         this.locale = locale;
@@ -38,11 +39,17 @@ public class ProductManager {
 
     public Product createProduct(int id, String name, BigDecimal price, Rating rating, LocalDate bestBefore){
         product = new Food(id, name, price, rating, bestBefore);
+
+        //Crear listado de reseñas por producto
+        products.putIfAbsent(product, new ArrayList<>());
         return product;
     }
 
     public Product createProduct(int id, String name, BigDecimal price, Rating rating){
         product = new Drink(id, name, price, rating);
+
+        //Crear listado de reseñas por producto
+        products.putIfAbsent(product, new ArrayList<>());
         return product;
     }
 
