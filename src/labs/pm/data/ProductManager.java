@@ -27,7 +27,7 @@ public class ProductManager {
     private NumberFormat moneyFomart;
 
     private Review[] reviews = new Review[5];
-    public Map<Product, List<Review>> products = new HashMap<>();
+    private Map<Product, List<Review>> products = new HashMap<>();
 
 
     public ProductManager (Locale locale){
@@ -72,6 +72,10 @@ public class ProductManager {
         return this.product;
     }
 
+    public Product reviewProduct ( int id, Rating rating, String comments){
+        return reviewProduct(findProduct(id), rating, comments);
+    }
+
     public void printProductReport(Product product){
 
         List<Review> reviews = products.get(product);
@@ -106,10 +110,28 @@ public class ProductManager {
                 txt.append('\n');
             }
 
-
         }
 
         txt.append('\n');
+
+        Collections.sort(reviews);
+
         System.out.println(txt);
+    }
+
+    public void printProductReport(int id){
+        printProductReport(findProduct(id));
+    }
+
+    public Product findProduct (int id){
+        Product result = null;
+
+        for (Product product : products.keySet()) {
+            if (product.getId() == id) {
+                result = product;
+                break;
+            }
+        }
+        return result;
     }
 }
