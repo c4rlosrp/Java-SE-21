@@ -27,7 +27,7 @@ public class ProductManager {
     private NumberFormat moneyFomart;
 
     private Review[] reviews = new Review[5];
-    private Map<Product, List<Review>> products = new HashMap<>();
+    public Map<Product, List<Review>> products = new HashMap<>();
 
 
     public ProductManager (Locale locale){
@@ -54,28 +54,29 @@ public class ProductManager {
     }
 
     public Product reviewProduct(Product product, Rating rating, String comments) {
-        //review = new Review(rating, comments);
-        if (reviews[reviews.length - 1] != null){
-            reviews = Arrays.copyOf(reviews, reviews.length + 5);
+
+        List<Review> reviews = products.get(product);
+        products.remove(product, reviews);
+
+        reviews.add(new Review(rating,comments));
+
+        int sum= 0;
+        for (Review review: reviews){
+            sum += review.rating().ordinal();
         }
 
-        int sum= 0, i = 0;
-        boolean reviewed = false;
+        this.product = product.applyRating(Rateable.converrt(Math.round(sum/reviews.size())));
 
-        while (i < reviews.length && !reviewed) {
-            if(reviews[i] == null){
-                reviews[i] = new Review(rating, comments);
-                reviewed = true;
-            }
-            sum+= reviews[i].rating().ordinal();
-            i++;
-        }
+        products.put(product, reviews);
 
-        this.product = product.applyRating(Rateable.converrt(Math.round(sum/i)));
         return this.product;
     }
 
-    public void printProductReport(){
+    public void printProductReport(Product product){
+
+        List<Review> reviews = products.get(product);
+
+
         StringBuilder txt = new StringBuilder();
 
         String type = switch (product){
@@ -90,26 +91,17 @@ public class ProductManager {
                 dateFormat.format(product.getBestBefore()),
                 type));
 
-
-        //        txt.append(product);
-//        txt.append('\n');
-//        if (review != null)
-//            txt.append(review);
-//        else
-//            txt.append("Not reviewed");
         txt.append('\n');
         for (Review review : reviews) {
             if (review == null){
                 break;
-            }//else {
-//                txt.append('\n');
-//                txt.append(resources.getString("no.reviews"));
-//            }
+            }
+
             txt.append(MessageFormat.format(resources.getString("review"),
                     review.rating().getStars(),
                     review.comments()));
             txt.append('\n');
-            if (reviews[0] == null){
+            if (reviews.isEmpty()){
                 txt.append(resources.getString("no.reviews"));
                 txt.append('\n');
             }
