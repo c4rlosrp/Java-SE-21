@@ -21,20 +21,33 @@ import java.util.*;
 public class ProductManager {
     private Product product;
     private Review review;
-    private Locale locale;
-    private ResourceBundle resources;
-    private DateTimeFormatter dateFormat;
-    private NumberFormat moneyFomart;
+
 
     private Review[] reviews = new Review[5];
     private Map<Product, List<Review>> products = new HashMap<>();
+    private static Map<String, ResourceFormatter> formatters =
+            Map.of("en-GB", new ResourceFormatter(Locale.UK),
+                    "en-US", new ResourceFormatter(Locale.US),
+                    "es-ES", new ResourceFormatter(Locale.of("es","ES")),
+                    "fr-FR", new ResourceFormatter(Locale.FRANCE),
+                    "zh-CN", new ResourceFormatter(Locale.CHINA));
 
+    private ResourceFormatter formatter;
+
+    public ProductManager (String languageTag){
+        changeLocale(languageTag);
+    }
 
     public ProductManager (Locale locale){
-        this.locale = locale;
-        resources = ResourceBundle.getBundle("labs.pm.data.resources", locale);
-        dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
-        moneyFomart = NumberFormat.getCurrencyInstance(locale);
+        this(locale.toLanguageTag());
+    }
+
+    public void changeLocale(String languageTag){
+        formatter = formatters.getOrDefault(languageTag,formatters.get("en-GB"));
+    }
+
+    public static Set<String> getSupporterLocales(){
+        return formatters.keySet();
     }
 
     public Product createProduct(int id, String name, BigDecimal price, Rating rating, LocalDate bestBefore){
@@ -65,11 +78,11 @@ public class ProductManager {
             sum += review.rating().ordinal();
         }
 
-        this.product = product.applyRating(Rateable.converrt(Math.round(sum/reviews.size())));
+        product = product.applyRating(Rateable.converrt(Math.round((float)sum/reviews.size())));
 
         products.put(product, reviews);
 
-        return this.product;
+        return product;
     }
 
     public Product reviewProduct ( int id, Rating rating, String comments){
@@ -79,42 +92,24 @@ public class ProductManager {
     public void printProductReport(Product product){
 
         List<Review> reviews = products.get(product);
-
-
+        Collections.sort(reviews);
         StringBuilder txt = new StringBuilder();
 
-        String type = switch (product){
-            case Food food -> resources.getString("food");
-            case Drink drink -> resources.getString("drink");
-        };
-
-        txt.append(MessageFormat.format(resources.getString("product"),
-                product.getName(),
-                moneyFomart.format(product.getPrice()),
-                product.getRating().getStars(),
-                dateFormat.format(product.getBestBefore()),
-                type));
-
+        txt.append(formatter.formatProduct(product));
         txt.append('\n');
+
         for (Review review : reviews) {
-            if (review == null){
-                break;
-            }
 
-            txt.append(MessageFormat.format(resources.getString("review"),
-                    review.rating().getStars(),
-                    review.comments()));
+            txt.append(formatter.formatReview(review));
             txt.append('\n');
-            if (reviews.isEmpty()){
-                txt.append(resources.getString("no.reviews"));
-                txt.append('\n');
-            }
-
         }
 
-        txt.append('\n');
+        if (reviews.isEmpty()){
+            txt.append(formatter.getText("no.reviews"));
+            txt.append('\n');
+        }
 
-        Collections.sort(reviews);
+
 
         System.out.println(txt);
     }
@@ -134,4 +129,43 @@ public class ProductManager {
         }
         return result;
     }
+
+    // Clase anidada estática: solo la usa ProductManager
+    private static class ResourceFormatter{
+        private Locale locale;
+        private ResourceBundle resources;
+        private DateTimeFormatter dateFormat;
+        private NumberFormat moneyFomart;
+        // La lógica que habia del Constructor de ProductManager se traslada a la clase anidada
+        private ResourceFormatter(Locale locale){
+            this.locale = locale;
+            resources = ResourceBundle.getBundle("labs.pm.data.resources", locale);
+            dateFormat = DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).localizedBy(locale);
+            moneyFomart = NumberFormat.getCurrencyInstance(locale);
+        }
+        private String formatProduct (Product product){
+            // switch exhaustivo: Product es sealed y solo permite food y drink
+            String type = switch (product){
+                case Food food -> resources.getString("food");
+                case Drink drink -> resources.getString("drink");
+            };
+            return (MessageFormat.format(resources.getString("product"),
+                    product.getName(),
+                    moneyFomart.format(product.getPrice()),
+                    product.getRating().getStars(),
+                    dateFormat.format(product.getBestBefore()),
+                    type));
+        }
+
+        private String formatReview(Review review){
+            return (MessageFormat.format(resources.getString("review"),
+                    review.rating().getStars(),
+                    review.comments()));
+        }
+
+        private String getText(String key){
+            return resources.getString(key);
+        }
+    }
+
 }
