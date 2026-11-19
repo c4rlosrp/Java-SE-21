@@ -25,57 +25,57 @@ public class Shop {
 
     public static void main(String[] args) {
 
-        ProductManager pm = new ProductManager("es_ES");
+        ProductManager pm = new ProductManager(Locale.UK);
 
         Product p1 = pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED, LocalDate.now());
 
 
         pm.printProductReport(p1);
-        pm.reviewProduct(p1, Rating.FOUR_STAR, "Nice hot cup of tea");
-        pm.reviewProduct(p1, Rating.ONE_STAR, "Meh");
-        pm.reviewProduct(p1, Rating.ONE_STAR, "No esta tan bueno");
-        pm.reviewProduct(p1, Rating.FIVE_STAR, "Is the best hot cup of tea i drink in all my life");
-        pm.reviewProduct(p1, Rating.THREE_STAR, "Not bad");
-        pm.reviewProduct(p1, Rating.FOUR_STAR, "Really good");
+        p1 = pm.reviewProduct(p1, Rating.FOUR_STAR, "Nice hot cup of tea");
+        p1 = pm.reviewProduct(p1, Rating.ONE_STAR, "Meh");
+        p1 = pm.reviewProduct(p1, Rating.ONE_STAR, "No esta tan bueno");
+        p1 = pm.reviewProduct(p1, Rating.FIVE_STAR, "Is the best hot cup of tea i drink in all my life");
+        p1 = pm.reviewProduct(p1, Rating.THREE_STAR, "Not bad");
+        p1 = pm.reviewProduct(p1, Rating.FOUR_STAR, "Really good");
         pm.printProductReport(p1);
 
         Product p2 = pm.createProduct(102, "Coffee",
                 BigDecimal.valueOf(1.99), Rating.NOT_RATED);
-        pm.reviewProduct(p2, Rating.THREE_STAR, "Coffee was ok");
-        pm.reviewProduct(p2, Rating.ONE_STAR, "Where is the milk?!");
-        pm.reviewProduct(p2, Rating.FIVE_STAR,
+        p2 = pm.reviewProduct(p2, Rating.THREE_STAR, "Coffee was ok");
+        p2 = pm.reviewProduct(p2, Rating.ONE_STAR, "Where is the milk?!");
+        p2 = pm.reviewProduct(p2, Rating.FIVE_STAR,
                 "It's perfect with ten spoons of sugar!");
         pm.printProductReport(p2);
 
         Product p3 = pm.createProduct(103, "Cake",
                 BigDecimal.valueOf(3.99), Rating.NOT_RATED,
                 LocalDate.now().plusDays(2));
-        pm.reviewProduct(p3, Rating.FIVE_STAR, "Very nice cake");
-        pm.reviewProduct(p3, Rating.FOUR_STAR,
+        p3 = pm.reviewProduct(p3, Rating.FIVE_STAR, "Very nice cake");
+        p3 = pm.reviewProduct(p3, Rating.FOUR_STAR,
                 "Good, but I've expected more chocolate");
-        pm.reviewProduct(p3, Rating.FIVE_STAR, "This cake is perfect!");
+        p3 = pm.reviewProduct(p3, Rating.FIVE_STAR, "This cake is perfect!");
         pm.printProductReport(p3);
 
         Product p4 = pm.createProduct(104, "Cookie",
                 BigDecimal.valueOf(2.99), Rating.NOT_RATED,
                 LocalDate.now());
-        pm.reviewProduct(p4, Rating.THREE_STAR, "Just another cookie");
-        pm.reviewProduct(p4, Rating.THREE_STAR, "Ok");
+        p4 = pm.reviewProduct(p4, Rating.THREE_STAR, "Just another cookie");
+        p4 = pm.reviewProduct(p4, Rating.THREE_STAR, "Ok");
         pm.printProductReport(p4);
 
         Product p5 = pm.createProduct(105, "Hot Chocolate",
                 BigDecimal.valueOf(2.50), Rating.NOT_RATED);
-        pm.reviewProduct(p5, Rating.FOUR_STAR, "Tasty!");
-        pm.reviewProduct(p5, Rating.FOUR_STAR, "No bad at all");
+        p5 = pm.reviewProduct(p5, Rating.FOUR_STAR, "Tasty!");
+        p5 = pm.reviewProduct(p5, Rating.FOUR_STAR, "No bad at all");
         pm.printProductReport(p5);
 
         Product p6 = pm.createProduct(106, "Chocolate",
                 BigDecimal.valueOf(2.50), Rating.NOT_RATED,
                 LocalDate.now().plusDays(3));
-        pm.reviewProduct(p6, Rating.TWO_STAR, "Too sweet");
-        pm.reviewProduct(p6, Rating.THREE_STAR, "Better then cookie");
-        pm.reviewProduct(p6, Rating.TWO_STAR, "Too bitter");
-        pm.reviewProduct(p6, Rating.ONE_STAR, "I don't get it!");
+        p6 = pm.reviewProduct(p6, Rating.TWO_STAR, "Too sweet");
+        p6 = pm.reviewProduct(p6, Rating.THREE_STAR, "Better then cookie");
+        p6 = pm.reviewProduct(p6, Rating.TWO_STAR, "Too bitter");
+        p6 = pm.reviewProduct(p6, Rating.ONE_STAR, "I don't get it!");
         pm.printProductReport(p6);
 
 //        for (Product p: pm.products.keySet()){
