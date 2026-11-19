@@ -28,7 +28,7 @@ public class Shop {
 
         ProductManager pm = new ProductManager("es-ES");
 
-        Product p1 = pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED, LocalDate.now());
+        Product p1 = pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED);
 
 
         pm.printProductReport(p1);
@@ -91,8 +91,10 @@ public class Shop {
 
         Comparator<Product> priceSorter = (pr1,pr2) -> pr2.getPrice().compareTo(pr1.getPrice());
         Comparator<Product> ratingSorter = (pr1,pr2)-> pr1.getRating().ordinal() - pr2.getRating().ordinal();
-        pm.printProducts(priceSorter);
-        pm.printProducts(ratingSorter.thenComparing(priceSorter).reversed());
+        pm.printProducts(p -> p.getPrice().floatValue() < 3,
+                priceSorter);
+        pm.printProducts(p -> p.getPrice().floatValue() < 4,
+                priceSorter.thenComparing(ratingSorter).reversed());
 
     }
 

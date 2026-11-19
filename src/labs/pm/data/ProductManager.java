@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * @author manana
@@ -73,12 +75,23 @@ public class ProductManager {
 
         reviews.add(new Review(rating,comments));
 
-        int sum= 0;
-        for (Review review: reviews){
-            sum += review.rating().ordinal();
-        }
+        product = product.applyRating(
+                Rateable.convert(
+                        (int) Math.round(
+                                reviews.stream()
+                                        .mapToInt(r -> r.rating().ordinal())
+                                        .average()
+                                        .orElse(0)
+                        )
+                )
+        );
 
-        product = product.applyRating(Rateable.convert(Math.round((float)sum/reviews.size())));
+//        int sum= 0;
+//        for (Review review: reviews){
+//            sum += review.rating().ordinal();
+//        }
+//
+//        product = product.applyRating(Rateable.convert(Math.round((float)sum/reviews.size())));
 
         products.put(product, reviews);
 
@@ -98,16 +111,31 @@ public class ProductManager {
         txt.append(formatter.formatProduct(product));
         txt.append('\n');
 
-        for (Review review : reviews) {
 
-            txt.append(formatter.formatReview(review));
-            txt.append('\n');
+        if(reviews.isEmpty()){
+            txt.append(formatter.getText("no.reviews") + '\n');
+        }else {
+            txt.append(reviews.stream()
+                              .map(r -> formatter.formatReview(r) + '\n')
+                              .collect(Collectors.joining())
+            );
+
+            // Otra forma de hacer lo en el else
+            // reviews.stream().forEach(r -> txt.append(formatter.formatReview(r) + '\n'));
         }
 
-        if (reviews.isEmpty()){
-            txt.append(formatter.getText("no.reviews"));
-            txt.append('\n');
-        }
+
+
+//        for (Review review : reviews) {
+//
+//            txt.append(formatter.formatReview(review));
+//            txt.append('\n');
+//        }
+//
+//        if (reviews.isEmpty()){
+//            txt.append(formatter.getText("no.reviews"));
+//            txt.append('\n');
+//        }
 
 
 
@@ -118,30 +146,44 @@ public class ProductManager {
         printProductReport(findProduct(id));
     }
 
-    public void printProducts(Comparator<Product> sorter){
-        List<Product> productList = new ArrayList<>(products.keySet());
-        productList.sort(sorter);
-
+    public void printProducts(Predicate<Product> filter, Comparator<Product> sorter){
         StringBuilder txt = new StringBuilder();
 
-        for (Product product: productList){
-            txt.append(formatter.formatProduct(product));
-            txt.append("\n");
-        }
+        products.keySet()
+                .stream()
+                .sorted(sorter)
+                .filter(filter)
+                .forEach(p -> txt.append(formatter.formatProduct(p) + '\n'));
+
+
+//        List<Product> productList = new ArrayList<>(products.keySet());
+//        productList.sort(sorter);
+
+
+//        for (Product product: productList){
+//            txt.append(formatter.formatProduct(product));
+//            txt.append("\n");
+//        }
 
         System.out.println(txt);
     }
 
     public Product findProduct (int id){
-        Product result = null;
+//        Product result = null;
+//
+//        for (Product product : products.keySet()) {
+//            if (product.getId() == id) {
+//                result = product;
+//                break;
+//            }
+//        }
+//        return result;
 
-        for (Product product : products.keySet()) {
-            if (product.getId() == id) {
-                result = product;
-                break;
-            }
-        }
-        return result;
+    return products.keySet()
+            .stream()
+            .filter(p -> p.getId() == id)
+            .findFirst()
+            .orElseGet(() -> null);
     }
 
     // Clase anidada estática: solo la usa ProductManager
