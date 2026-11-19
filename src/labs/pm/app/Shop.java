@@ -13,6 +13,7 @@ import javax.swing.plaf.basic.BasicRadioButtonMenuItemUI;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,7 +26,7 @@ public class Shop {
 
     public static void main(String[] args) {
 
-        ProductManager pm = new ProductManager(Locale.UK);
+        ProductManager pm = new ProductManager("es-ES");
 
         Product p1 = pm.createProduct(101, "Tea", BigDecimal.valueOf(1.99), Rating.NOT_RATED, LocalDate.now());
 
@@ -85,6 +86,13 @@ public class Shop {
 //            }
 //
 //        }
+
+//        pm.printProducts((pr1,pr2)-> pr1.getRating().ordinal() - pr2.getRating().ordinal());
+
+        Comparator<Product> priceSorter = (pr1,pr2) -> pr2.getPrice().compareTo(pr1.getPrice());
+        Comparator<Product> ratingSorter = (pr1,pr2)-> pr1.getRating().ordinal() - pr2.getRating().ordinal();
+        pm.printProducts(priceSorter);
+        pm.printProducts(ratingSorter.thenComparing(priceSorter).reversed());
 
     }
 
