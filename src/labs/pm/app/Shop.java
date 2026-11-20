@@ -16,6 +16,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
+
+import static java.util.Locale.filter;
 
 /**
  * {@code Shop} class represents am aplication that ,anages Products
@@ -50,7 +53,7 @@ public class Shop {
 
         Product p3 = pm.createProduct(103, "Cake",
                 BigDecimal.valueOf(3.99), Rating.NOT_RATED,
-                LocalDate.now().plusDays(2));
+                LocalDate.now().plusDays(0));
         p3 = pm.reviewProduct(p3, Rating.FIVE_STAR, "Very nice cake");
         p3 = pm.reviewProduct(p3, Rating.FOUR_STAR,
                 "Good, but I've expected more chocolate");
@@ -72,7 +75,7 @@ public class Shop {
 
         Product p6 = pm.createProduct(106, "Chocolate",
                 BigDecimal.valueOf(2.50), Rating.NOT_RATED,
-                LocalDate.now().plusDays(3));
+                LocalDate.now().plusDays(0));
         p6 = pm.reviewProduct(p6, Rating.TWO_STAR, "Too sweet");
         p6 = pm.reviewProduct(p6, Rating.THREE_STAR, "Better then cookie");
         p6 = pm.reviewProduct(p6, Rating.TWO_STAR, "Too bitter");
@@ -96,6 +99,8 @@ public class Shop {
         pm.printProducts(p -> p.getPrice().floatValue() < 4,
                 priceSorter.thenComparing(ratingSorter).reversed());
 
+
+        pm.getDiscounts().forEach( (k,v) -> System.out.println(k + "\t" + v));
     }
 
 }
