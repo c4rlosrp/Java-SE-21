@@ -32,9 +32,9 @@ public class MovieManager {
         }
     }
 
-    public List<Movie> getTopMovies(int limit){
+    public List<Movie> getTopMovies(int limit) throws TresholdException{
         if(limit > TresholdException.MAXIMUMSIZE || limit < TresholdException.MINIMUMSIZE){
-            throw new TresholdException("El valor debe estar entre 0 y 100");
+            throw new TresholdException("El limite debe estar entre 0 y 100");
         }
         return catalogo.stream()
                 .sorted(Comparator.comparing((Movie m) -> m.getStars()).reversed())
@@ -44,7 +44,7 @@ public class MovieManager {
                 ;
     }
 
-    public void  showTop5Movies(){
+    public void  showTop5Movies() throws TresholdException{
         getTopMovies(5).forEach(m -> System.out.println(m.getTitle() + " - " + m.getStars()));
     }
 
@@ -76,9 +76,9 @@ public class MovieManager {
                 .forEach(System.out::println);
     }
 
-    public int getSkipAndLongestTitle(int skip) throws InputMismatchException{
+    public int getSkipAndLongestTitle(int skip) throws InputMismatchException, IOException{
         if(skip > TresholdException.MAXIMUMSIZE || skip < TresholdException.MINIMUMSIZE){
-            throw new TresholdException("El valor debe estar entre 0 y 100");
+            throw new TresholdException();
         }
         return catalogo.stream()
                 .skip(skip)
